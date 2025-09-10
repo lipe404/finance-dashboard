@@ -389,10 +389,20 @@ def secao_poupanca():
             # Histórico de movimentações
             historico_df = data_manager.get_poupanca_historico_df()
             if not historico_df.empty:
-                fig_evolucao = visualizations.plot_evolucao_poupanca(
+                # Usar a função melhorada
+                fig_evolucao = visualizations.plot_evolucao_poupanca_melhorado(
                     historico_df)
                 if fig_evolucao:
                     st.plotly_chart(fig_evolucao, use_container_width=True)
+                else:
+                    # Fallback para a função original corrigida
+                    fig_evolucao = visualizations.plot_evolucao_poupanca(
+                        historico_df)
+                    if fig_evolucao:
+                        st.plotly_chart(fig_evolucao, use_container_width=True)
+            else:
+                st.info(
+                    "📊 Nenhuma movimentação registrada ainda. Faça sua primeira operação!")
 
         with col2:
             st.subheader("Nova Movimentação")
@@ -434,10 +444,15 @@ def secao_poupanca():
                     "🔍 Filtrar por Operação", operacoes_unicas)
 
             with col2:
-                historico_df['data'] = pd.to_datetime(historico_df['data'])
-                meses_unicos = [
-                    'Todos'] + sorted(historico_df['data'].dt.strftime('%Y-%m').unique(), reverse=True)
-                mes_filtro = st.selectbox("📅 Filtrar por Mês", meses_unicos)
+                # Converter data para datetime se necessário
+                if 'data' in historico_df.columns:
+                    historico_df['data'] = pd.to_datetime(historico_df['data'])
+                    meses_unicos = [
+                        'Todos'] + sorted(historico_df['data'].dt.strftime('%Y-%m').unique(), reverse=True)
+                    mes_filtro = st.selectbox(
+                        "📅 Filtrar por Mês", meses_unicos)
+                else:
+                    mes_filtro = 'Todos'
 
             # Aplicar filtros
             df_filtrado = historico_df.copy()
@@ -446,7 +461,7 @@ def secao_poupanca():
                 df_filtrado = df_filtrado[df_filtrado['operacao']
                                           == operacao_filtro]
 
-            if mes_filtro != 'Todos':
+            if mes_filtro != 'Todos' and 'data' in df_filtrado.columns:
                 df_filtrado = df_filtrado[df_filtrado['data'].dt.strftime(
                     '%Y-%m') == mes_filtro]
 
@@ -458,7 +473,12 @@ def secao_poupanca():
                     lambda x: f"R\$ {x:,.2f}")
                 df_display['saldo_atual'] = df_display['saldo_atual'].apply(
                     lambda x: f"R\$ {x:,.2f}")
-                df_display['data'] = df_display['data'].dt.strftime('%d/%m/%Y')
+
+                # Formatar data
+                if 'data' in df_display.columns:
+                    df_display['data'] = pd.to_datetime(
+                        df_display['data']).dt.strftime('%d/%m/%Y')
+
                 df_display['operacao'] = df_display['operacao'].apply(
                     lambda x: "📈 Depósito" if x == "deposito" else "�� Saque")
 
@@ -474,6 +494,27 @@ def secao_poupanca():
                     hide_index=True,
                     use_container_width=True
                 )
+
+                # Estatísticas do período
+                col_a, col_b, col_c = st.columns(3)
+
+                total_depositos = df_filtrado[df_filtrado['operacao'] == 'deposito']['valor'].sum(
+                )
+                total_saques = df_filtrado[df_filtrado['operacao'] == 'saque']['valor'].sum(
+                )
+                saldo_periodo = total_depositos - total_saques
+
+                with col_a:
+                    st.metric("📈 Total Depósitos",
+                              f"R\$ {total_depositos:,.2f}")
+
+                with col_b:
+                    st.metric("📉 Total Saques", f"R\$ {total_saques:,.2f}")
+
+                with col_c:
+                    st.metric("�� Saldo do Período",
+                              f"R\$ {saldo_periodo:,.2f}")
+
             else:
                 st.info("📊 Nenhuma movimentação encontrada com os filtros aplicados")
         else:
@@ -491,7 +532,8 @@ def secao_poupanca():
             min_value=0.01,
             max_value=50.0,
             value=taxa_atual,
-            step=0.01
+            step=0.01,
+            help="Taxa de rendimento anual para cálculos de simulação"
         )
 
         if st.button("💾 Atualizar Taxa CDI"):
@@ -500,6 +542,25 @@ def secao_poupanca():
                 st.rerun()
             else:
                 st.error("❌ Erro ao atualizar taxa CDI")
+
+        st.divider()
+
+        # Informações adicionais
+        st.subheader("ℹ️ Informações sobre a Taxa CDI")
+
+        with st.expander("📚 O que é a Taxa CDI?"):
+            st.markdown("""
+            **CDI (Certificado de Depósito Interbancário)** é uma taxa de juros que serve como referência 
+            para diversos investimentos no Brasil.
+            
+            **Como usar:**
+            - A taxa é utilizada para simular o rendimento da sua poupança
+            - Você pode ajustar conforme o tipo de investimento que possui
+            - Para poupança tradicional, use cerca de 70% do CDI
+            - Para CDBs e outros investimentos, use valores próximos ao CDI atual
+            
+            **Taxa CDI atual do mercado:** Consulte sites financeiros para obter a taxa atualizada.
+            """)
 
 
 def secao_objetivos_simulacoes():

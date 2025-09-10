@@ -14,12 +14,14 @@ class FinanceVisualizations:
         if historico_df.empty:
             return None
 
+        # Usar 'saldo_atual' em vez de 'saldo'
         fig = px.line(
             historico_df,
             x='data',
-            y='saldo',
+            y='saldo_atual',  # Corrigido aqui
             title='📈 Evolução do Saldo da Poupança',
-            labels={'saldo': 'Saldo (R\$)', 'data': 'Data'}
+            # Corrigido aqui
+            labels={'saldo_atual': 'Saldo (R\$)', 'data': 'Data'}
         )
 
         fig.update_layout(
@@ -150,5 +152,60 @@ class FinanceVisualizations:
                 }
             }
         ))
+
+        return fig
+
+    @staticmethod
+    def plot_evolucao_poupanca_melhorado(historico_df):
+        """Gráfico melhorado de evolução da poupança com marcadores de operações"""
+        if historico_df.empty:
+            return None
+
+        # Converter data para datetime se necessário
+        if 'data' in historico_df.columns:
+            historico_df['data'] = pd.to_datetime(historico_df['data'])
+
+        # Criar gráfico base
+        fig = go.Figure()
+
+        # Linha principal do saldo
+        fig.add_trace(go.Scatter(
+            x=historico_df['data'],
+            y=historico_df['saldo_atual'],
+            mode='lines+markers',
+            name='Saldo da Poupança',
+            line=dict(color='blue', width=2),
+            marker=dict(size=6)
+        ))
+
+        # Marcar depósitos
+        depositos = historico_df[historico_df['operacao'] == 'deposito']
+        if not depositos.empty:
+            fig.add_trace(go.Scatter(
+                x=depositos['data'],
+                y=depositos['saldo_atual'],
+                mode='markers',
+                name='Depósitos',
+                marker=dict(color='green', size=10, symbol='triangle-up')
+            ))
+
+        # Marcar saques
+        saques = historico_df[historico_df['operacao'] == 'saque']
+        if not saques.empty:
+            fig.add_trace(go.Scatter(
+                x=saques['data'],
+                y=saques['saldo_atual'],
+                mode='markers',
+                name='Saques',
+                marker=dict(color='red', size=10, symbol='triangle-down')
+            ))
+
+        fig.update_layout(
+            title='📈 Evolução do Saldo da Poupança',
+            xaxis_title='Data',
+            yaxis_title='Saldo (R\$)',
+            hovermode='x unified',
+            showlegend=True
+        )
 
         return fig

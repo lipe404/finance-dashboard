@@ -1,0 +1,90 @@
+{
+  "rendimentos": [
+    {
+      "id": 1,
+      "fonte": "Salário",
+      "valor": 2200.0,
+      "data": "2025-10-06",
+      "descricao": "",
+      "timestamp": "2025-09-10T09:47:34.410697"
+    }
+  ],
+  "gastos": [
+    {
+      "id": 1,
+      "categoria": "🏠 Moradia",
+      "valor": 450.0,
+      "data": "2025-10-06",
+      "descricao": "Aluguel",
+      "timestamp": "2025-09-10T09:50:29.612890"
+    },
+    {
+      "id": 2,
+      "categoria": "🎓 Educação",
+      "valor": 200.0,
+      "data": "2025-10-06",
+      "descricao": "Mensalidade faculdade",
+      "timestamp": "2025-09-10T09:50:55.308881"
+    },
+    {
+      "id": 3,
+      "categoria": "🔧 Outros",
+      "valor": 62.0,
+      "data": "2025-10-12",
+      "descricao": "Mensalidade Academia",
+      "timestamp": "2025-09-10T09:51:31.539077"
+    },
+    {
+      "id": 4,
+      "categoria": "🎓 Educação",
+      "valor": 97.0,
+      "data": "2025-10-09",
+      "descricao": "Mensalidade Python Impressionador",
+      "timestamp": "2025-09-10T09:51:50.780642"
+    },
+    {
+      "id": 5,
+      "categoria": "🔧 Outros",
+      "valor": 1600.0,
+      "data": "2025-10-06",
+      "descricao": "Fatura Nubank",
+      "timestamp": "2025-09-10T09:52:15.264068"
+    }
+  ],
+  "poupanca": {
+    "saldo_atual": 4500.0,
+    "historico": [
+      {
+        "id": 1,
+        "operacao": "deposito",
+        "valor": 4500.0,
+        "saldo_anterior": 0.0,
+        "saldo_atual": 4500.0,
+        "data": "2025-09-10",
+        "descricao": "Caixinha Nubank",
+        "timestamp": "2025-09-10T09:48:10.438427"
+      }
+    ],
+    "taxa_cdi": 13.75
+  },
+  "objetivos": [
+    {
+      "id": 1,
+      "nome": "Anel de noivado",
+      "valor_meta": 2800.0,
+      "prazo_meses": 7,
+      "descricao": "Comprar anel de noivado para Jayza",
+      "data_criacao": "2025-09-10",
+      "ativo": true
+    },
+    {
+      "id": 2,
+      "nome": "Aluguel local casamento",
+      "valor_meta": 4100.0,
+      "prazo_meses": 18,
+      "descricao": "Aluguel da localidade do casamento",
+      "data_criacao": "2025-09-10",
+      "ativo": true
+    }
+  ]
+}

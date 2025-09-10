@@ -126,7 +126,17 @@ class DataManager:
         """Retorna DataFrame do histórico da poupança"""
         if not self.data['poupanca']['historico']:
             return pd.DataFrame()
-        return pd.DataFrame(self.data['poupanca']['historico'])
+
+        df = pd.DataFrame(self.data['poupanca']['historico'])
+
+        # Garantir que a coluna 'data' seja datetime
+        if 'data' in df.columns:
+            df['data'] = pd.to_datetime(df['data'])
+
+        # Ordenar por data
+        df = df.sort_values('data') if 'data' in df.columns else df
+
+        return df
 
     def delete_rendimento(self, rendimento_id):
         """Remove um rendimento"""
