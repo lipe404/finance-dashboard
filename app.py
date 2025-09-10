@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime, date
 import plotly.express as px
+import json
 from data_manager import DataManager
 from calculations import FinanceCalculator
 from visualizations import FinanceVisualizations
@@ -323,7 +324,7 @@ def secao_gastos():
                 categorias_unicas = ['Todas'] + \
                     list(gastos_df['categoria'].unique())
                 categoria_filtro = st.selectbox(
-                    "�� Filtrar por Categoria", categorias_unicas)
+                    "Filtrar por Categoria", categorias_unicas)
 
             with col2:
                 # Filtro por mês
@@ -480,7 +481,7 @@ def secao_poupanca():
                         df_display['data']).dt.strftime('%d/%m/%Y')
 
                 df_display['operacao'] = df_display['operacao'].apply(
-                    lambda x: "📈 Depósito" if x == "deposito" else "�� Saque")
+                    lambda x: "📈 Depósito" if x == "deposito" else "Saque")
 
                 st.dataframe(
                     df_display,
@@ -512,7 +513,7 @@ def secao_poupanca():
                     st.metric("📉 Total Saques", f"R\$ {total_saques:,.2f}")
 
                 with col_c:
-                    st.metric("�� Saldo do Período",
+                    st.metric("Saldo do Período",
                               f"R\$ {saldo_periodo:,.2f}")
 
             else:
@@ -552,13 +553,13 @@ def secao_poupanca():
             st.markdown("""
             **CDI (Certificado de Depósito Interbancário)** é uma taxa de juros que serve como referência 
             para diversos investimentos no Brasil.
-            
+
             **Como usar:**
             - A taxa é utilizada para simular o rendimento da sua poupança
             - Você pode ajustar conforme o tipo de investimento que possui
             - Para poupança tradicional, use cerca de 70% do CDI
             - Para CDBs e outros investimentos, use valores próximos ao CDI atual
-            
+
             **Taxa CDI atual do mercado:** Consulte sites financeiros para obter a taxa atualizada.
             """)
 
@@ -786,7 +787,7 @@ def secao_relatorios():
         ["📈 Resumo Geral", "📊 Análise Mensal", "📋 Exportar Dados"])
 
     with tab1:
-        st.subheader("�� Resumo Geral das Finanças")
+        st.subheader("Resumo Geral das Finanças")
 
         # Carregar dados
         rendimentos_df = data_manager.get_rendimentos_df()
@@ -904,7 +905,7 @@ def secao_relatorios():
             st.info("📊 Adicione rendimentos e gastos para ver a análise mensal")
 
     with tab3:
-        st.subheader("�� Exportar Dados")
+        st.subheader("Exportar Dados")
 
         col1, col2 = st.columns(2)
 
@@ -996,7 +997,7 @@ def sidebar_info():
 
     if not rendimentos_df.empty:
         total_rendimentos = rendimentos_df['valor'].sum()
-        st.sidebar.metric("�� Total Rendimentos",
+        st.sidebar.metric("Total Rendimentos",
                           f"R\$ {total_rendimentos:,.2f}")
 
     if not gastos_df.empty:
